@@ -18,6 +18,7 @@ export default {
         return all_permission === permission || permissionFlag.includes(permission)
       })
 
+      console.log("当前用户是否有权限,[%o]", hasPermissions);
       if (!hasPermissions) {
         el.parentNode && el.parentNode.removeChild(el)
       }
