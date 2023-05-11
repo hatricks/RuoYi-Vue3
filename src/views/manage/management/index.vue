@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="计划名称" prop="trainTitle">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
+      <el-form-item label="培训计划名称" prop="trainTitle">
         <el-input
           v-model="queryParams.trainTitle"
           placeholder="请输入培训计划名称"
           clearable
-          @keyup.enter.native="handleQuery"
+          @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="培训人" prop="trainPersonName">
@@ -14,36 +14,40 @@
           v-model="queryParams.trainPersonName"
           placeholder="请输入培训人"
           clearable
-          @keyup.enter.native="handleQuery"
+          @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="培训时间" prop="trainDatetime">
-        <el-date-picker clearable
-          v-model="queryParams.trainDatetime"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择培训时间">
-        </el-date-picker>
+      <el-form-item label="培训时间" style="width: 308px">
+        <el-date-picker
+          v-model="daterangeTrainDatetime"
+          value-format="YYYY-MM-DD"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
       </el-form-item>
-      <el-form-item label="创建时间" prop="createDate">
-        <el-date-picker clearable
-          v-model="queryParams.createDate"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择创建时间">
-        </el-date-picker>
+      <el-form-item label="培训地址" prop="trainAddress">
+        <el-input
+          v-model="queryParams.trainAddress"
+          placeholder="请输入培训地址"
+          clearable
+          @keyup.enter="handleQuery"
+        />
       </el-form-item>
-      <el-form-item label="修改时间" prop="updateDate">
-        <el-date-picker clearable
-          v-model="queryParams.updateDate"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="请选择修改时间">
-        </el-date-picker>
+      <el-form-item label="创建时间" style="width: 308px">
+        <el-date-picker
+          v-model="daterangeCreateDate"
+          value-format="YYYY-MM-DD"
+          type="daterange"
+          range-separator="-"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -52,8 +56,7 @@
         <el-button
           type="primary"
           plain
-          icon="el-icon-plus"
-          size="mini"
+          icon="Plus"
           @click="handleAdd"
           v-hasPermi="['manage:management:add']"
         >新增</el-button>
@@ -62,8 +65,7 @@
         <el-button
           type="success"
           plain
-          icon="el-icon-edit"
-          size="mini"
+          icon="Edit"
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['manage:management:edit']"
@@ -73,8 +75,7 @@
         <el-button
           type="danger"
           plain
-          icon="el-icon-delete"
-          size="mini"
+          icon="Delete"
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['manage:management:remove']"
@@ -84,13 +85,12 @@
         <el-button
           type="warning"
           plain
-          icon="el-icon-download"
-          size="mini"
+          icon="Download"
           @click="handleExport"
           v-hasPermi="['manage:management:export']"
         >导出</el-button>
       </el-col>
-      <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
+      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="managementList" @selection-change="handleSelectionChange">
@@ -100,38 +100,26 @@
       <el-table-column label="培训人" align="center" prop="trainPersonName" />
       <el-table-column label="培训宗旨" align="center" prop="trainMessage" />
       <el-table-column label="培训时间" align="center" prop="trainDatetime" width="180">
-        <template slot-scope="scope">
+        <template #default="scope">
           <span>{{ parseTime(scope.row.trainDatetime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="培训地址" align="center" prop="trainAddress" />
       <el-table-column label="培训计划详情" align="center" prop="trainDesc" />
       <el-table-column label="创建时间" align="center" prop="createDate" width="180">
-        <template slot-scope="scope">
+        <template #default="scope">
           <span>{{ parseTime(scope.row.createDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="修改时间" align="center" prop="updateDate" width="180">
-        <template slot-scope="scope">
+        <template #default="scope">
           <span>{{ parseTime(scope.row.updateDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['manage:management:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-delete"
-            @click="handleDelete(scope.row)"
-            v-hasPermi="['manage:management:remove']"
-          >删除</el-button>
+        <template #default="scope">
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['manage:management:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['manage:management:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -139,14 +127,14 @@
     <pagination
       v-show="total>0"
       :total="total"
-      :page.sync="queryParams.pageNum"
-      :limit.sync="queryParams.pageSize"
+      v-model:page="queryParams.pageNum"
+      v-model:limit="queryParams.pageSize"
       @pagination="getList"
     />
 
     <!-- 添加或修改培训管理对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
+      <el-form ref="managementRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="培训计划名称" prop="trainTitle">
           <el-input v-model="form.trainTitle" placeholder="请输入培训计划名称" />
         </el-form-item>
@@ -160,7 +148,7 @@
           <el-date-picker clearable
             v-model="form.trainDatetime"
             type="date"
-            value-format="yyyy-MM-dd"
+            value-format="YYYY-MM-DD"
             placeholder="请选择培训时间">
           </el-date-picker>
         </el-form-item>
@@ -170,178 +158,181 @@
         <el-form-item label="培训计划详情" prop="trainDesc">
           <el-input v-model="form.trainDesc" placeholder="请输入培训计划详情" />
         </el-form-item>
-        <el-form-item label="创建时间" prop="createDate">
-          <el-date-picker clearable
-            v-model="form.createDate"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择创建时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="修改时间" prop="updateDate">
-          <el-date-picker clearable
-            v-model="form.updateDate"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="请选择修改时间">
-          </el-date-picker>
-        </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
 
-<script>
+<script setup name="Management">
 import { listManagement, getManagement, delManagement, addManagement, updateManagement } from "@/api/manage/management";
 
-export default {
-  name: "Management",
-  data() {
-    return {
-      // 遮罩层
-      loading: true,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      // 总条数
-      total: 0,
-      // 培训管理表格数据
-      managementList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        trainTitle: null,
-        trainPersonName: null,
-        trainMessage: null,
-        trainDatetime: null,
-        trainAddress: null,
-        trainDesc: null,
-        createDate: null,
-        updateDate: null
-      },
-      // 表单参数
-      form: {},
-      // 表单校验
-      rules: {
-      }
-    };
+const { proxy } = getCurrentInstance();
+
+const managementList = ref([]);
+const open = ref(false);
+const loading = ref(true);
+const showSearch = ref(true);
+const ids = ref([]);
+const single = ref(true);
+const multiple = ref(true);
+const total = ref(0);
+const title = ref("");
+const daterangeTrainDatetime = ref([]);
+const daterangeCreateDate = ref([]);
+
+const data = reactive({
+  form: {},
+  queryParams: {
+    pageNum: 1,
+    pageSize: 10,
+    trainTitle: null,
+    trainPersonName: null,
+    trainDatetime: null,
+    trainAddress: null,
+    createDate: null,
   },
-  created() {
-    this.getList();
-  },
-  methods: {
-    /** 查询培训管理列表 */
-    getList() {
-      this.loading = true;
-      listManagement(this.queryParams).then(response => {
-        this.managementList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        id: null,
-        trainTitle: null,
-        trainPersonName: null,
-        trainMessage: null,
-        trainDatetime: null,
-        trainAddress: null,
-        trainDesc: null,
-        createDate: null,
-        updateDate: null
-      };
-      this.resetForm("form");
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
-      this.getList();
-    },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.id)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      console.log("触发新增按钮")
-      this.reset();
-      this.open = true;
-      this.title = "添加培训管理";
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const id = row.id || this.ids
-      getManagement(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改培训管理";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.id != null) {
-            updateManagement(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addManagement(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const ids = row.id || this.ids;
-      this.$modal.confirm('是否确认删除培训管理编号为"' + ids + '"的数据项？').then(function() {
-        return delManagement(ids);
-      }).then(() => {
-        this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download('manage/management/export', {
-        ...this.queryParams
-      }, `management_${new Date().getTime()}.xlsx`)
-    }
+  rules: {
+    trainTitle: [
+      { required: true, message: "培训计划名称不能为空", trigger: "blur" }
+    ],
+    trainPersonName: [
+      { required: true, message: "培训人不能为空", trigger: "blur" }
+    ],
+    trainDatetime: [
+      { required: true, message: "培训时间不能为空", trigger: "blur" }
+    ],
+    trainAddress: [
+      { required: true, message: "培训地址不能为空", trigger: "blur" }
+    ],
   }
-};
+});
+
+const { queryParams, form, rules } = toRefs(data);
+
+/** 查询培训管理列表 */
+function getList() {
+  loading.value = true;
+  queryParams.value.params = {};
+  if (null != daterangeTrainDatetime && '' != daterangeTrainDatetime) {
+    queryParams.value.params["beginTrainDatetime"] = daterangeTrainDatetime.value[0];
+    queryParams.value.params["endTrainDatetime"] = daterangeTrainDatetime.value[1];
+  }
+  if (null != daterangeCreateDate && '' != daterangeCreateDate) {
+    queryParams.value.params["beginCreateDate"] = daterangeCreateDate.value[0];
+    queryParams.value.params["endCreateDate"] = daterangeCreateDate.value[1];
+  }
+  listManagement(queryParams.value).then(response => {
+    managementList.value = response.rows;
+    total.value = response.total;
+    loading.value = false;
+  });
+}
+
+// 取消按钮
+function cancel() {
+  open.value = false;
+  reset();
+}
+
+// 表单重置
+function reset() {
+  form.value = {
+    id: null,
+    trainTitle: null,
+    trainPersonName: null,
+    trainMessage: null,
+    trainDatetime: null,
+    trainAddress: null,
+    trainDesc: null,
+    createDate: null,
+    updateDate: null
+  };
+  proxy.resetForm("managementRef");
+}
+
+/** 搜索按钮操作 */
+function handleQuery() {
+  queryParams.value.pageNum = 1;
+  getList();
+}
+
+/** 重置按钮操作 */
+function resetQuery() {
+  daterangeTrainDatetime.value = [];
+  daterangeCreateDate.value = [];
+  proxy.resetForm("queryRef");
+  handleQuery();
+}
+
+// 多选框选中数据
+function handleSelectionChange(selection) {
+  ids.value = selection.map(item => item.id);
+  single.value = selection.length != 1;
+  multiple.value = !selection.length;
+}
+
+/** 新增按钮操作 */
+function handleAdd() {
+  reset();
+  open.value = true;
+  title.value = "添加培训管理";
+}
+
+/** 修改按钮操作 */
+function handleUpdate(row) {
+  reset();
+  const _id = row.id || ids.value
+  getManagement(_id).then(response => {
+    form.value = response.data;
+    open.value = true;
+    title.value = "修改培训管理";
+  });
+}
+
+/** 提交按钮 */
+function submitForm() {
+  proxy.$refs["managementRef"].validate(valid => {
+    if (valid) {
+      if (form.value.id != null) {
+        updateManagement(form.value).then(response => {
+          proxy.$modal.msgSuccess("修改成功");
+          open.value = false;
+          getList();
+        });
+      } else {
+        addManagement(form.value).then(response => {
+          proxy.$modal.msgSuccess("新增成功");
+          open.value = false;
+          getList();
+        });
+      }
+    }
+  });
+}
+
+/** 删除按钮操作 */
+function handleDelete(row) {
+  const _ids = row.id || ids.value;
+  proxy.$modal.confirm('是否确认删除培训管理编号为"' + _ids + '"的数据项？').then(function() {
+    return delManagement(_ids);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
+}
+
+/** 导出按钮操作 */
+function handleExport() {
+  proxy.download('manage/management/export', {
+    ...queryParams.value
+  }, `management_${new Date().getTime()}.xlsx`)
+}
+
+getList();
 </script>
