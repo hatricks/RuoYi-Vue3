@@ -1,36 +1,34 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="100px">
-      <el-form-item label="培训计划名称" prop="trainTitle">
+      <el-form-item label="员工名称" prop="userName">
         <el-input
-          v-model="queryParams.trainTitle"
-          placeholder="请输入培训计划名称"
+          v-model="queryParams.userName"
+          placeholder="请输入员工名称"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="培训人" prop="trainPersonName">
+      <el-form-item label="员工所属部门" prop="userSourceDept">
         <el-input
-          v-model="queryParams.trainPersonName"
-          placeholder="请输入培训人"
+          v-model="queryParams.userSourceDept"
+          placeholder="请输入员工所属部门"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="培训时间" style="width: 308px">
-        <el-date-picker
-          v-model="daterangeTrainDatetime"
-          value-format="YYYY-MM-DD hh:mm:ss"
-          type="daterange"
-          range-separator="-"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
-        ></el-date-picker>
-      </el-form-item>
-      <el-form-item label="培训地址" prop="trainAddress">
+      <el-form-item label="基本薪资" prop="baseMoney">
         <el-input
-          v-model="queryParams.trainAddress"
-          placeholder="请输入培训地址"
+          v-model="queryParams.baseMoney"
+          placeholder="请输入基本薪资"
+          clearable
+          @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="保险费" prop="insuranceMoney">
+        <el-input
+          v-model="queryParams.insuranceMoney"
+          placeholder="请输入保险费"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -38,7 +36,7 @@
       <el-form-item label="创建时间" style="width: 308px">
         <el-date-picker
           v-model="daterangeCreateDate"
-          value-format="YYYY-MM-DD hh:mm:ss"
+          value-format="YYYY-MM-DD"
           type="daterange"
           range-separator="-"
           start-placeholder="开始日期"
@@ -58,7 +56,7 @@
           plain
           icon="Plus"
           @click="handleAdd"
-          v-hasPermi="['manage:management:add']"
+          v-hasPermi="['system:salary:add']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -68,7 +66,7 @@
           icon="Edit"
           :disabled="single"
           @click="handleUpdate"
-          v-hasPermi="['manage:management:edit']"
+          v-hasPermi="['system:salary:edit']"
         >修改</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -78,7 +76,7 @@
           icon="Delete"
           :disabled="multiple"
           @click="handleDelete"
-          v-hasPermi="['manage:management:remove']"
+          v-hasPermi="['system:salary:remove']"
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -87,25 +85,20 @@
           plain
           icon="Download"
           @click="handleExport"
-          v-hasPermi="['manage:management:export']"
+          v-hasPermi="['system:salary:export']"
         >导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="managementList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="salaryList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="编号" align="center" prop="id" />
-      <el-table-column label="培训计划名称" align="center" prop="trainTitle" />
-      <el-table-column label="培训人" align="center" prop="trainPersonName" />
-      <el-table-column label="培训宗旨" align="center" prop="trainMessage" />
-      <el-table-column label="培训时间" align="center" prop="trainDatetime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.trainDatetime) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="培训地址" align="center" prop="trainAddress" />
-      <el-table-column label="培训计划详情" align="center" prop="trainDesc" />
+      <el-table-column label="主键" align="center" prop="id" />
+      <el-table-column label="员工编号" align="center" prop="userCode" />
+      <el-table-column label="员工名称" align="center" prop="userName" />
+      <el-table-column label="员工所属部门" align="center" prop="userSourceDept" />
+      <el-table-column label="基本薪资" align="center" prop="baseMoney" />
+      <el-table-column label="保险费" align="center" prop="insuranceMoney" />
       <el-table-column label="创建时间" align="center" prop="createDate" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.createDate) }}</span>
@@ -118,8 +111,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['manage:management:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['manage:management:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:salary:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:salary:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -132,31 +125,23 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改培训管理对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="managementRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="培训计划名称" prop="trainTitle">
-          <el-input v-model="form.trainTitle" placeholder="请输入培训计划名称" />
+    <!-- 添加或修改员工薪资对话框 -->
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+      <el-form ref="salaryRef" :model="form" :rules="rules" label-width="150px">
+        <el-form-item label="员工编号" prop="userCode">
+          <el-input v-model="form.userCode" placeholder="请输入员工编号" />
         </el-form-item>
-        <el-form-item label="培训人" prop="trainPersonName">
-          <el-input v-model="form.trainPersonName" placeholder="请输入培训人" />
+        <el-form-item label="员工名称" prop="userName">
+          <el-input v-model="form.userName" placeholder="请输入员工名称" />
         </el-form-item>
-        <el-form-item label="培训宗旨" prop="trainMessage">
-          <el-input v-model="form.trainMessage" placeholder="请输入培训宗旨" />
+        <el-form-item label="员工所属部门" prop="userSourceDept">
+          <el-input v-model="form.userSourceDept" placeholder="请输入员工所属部门" />
         </el-form-item>
-        <el-form-item label="培训时间" prop="trainDatetime">
-          <el-date-picker clearable
-            v-model="form.trainDatetime"
-            type="date"
-            value-format="YYYY-MM-DD hh:mm:ss"
-            placeholder="请选择培训时间">
-          </el-date-picker>
+        <el-form-item label="基本薪资" prop="baseMoney">
+          <el-input v-model="form.baseMoney" placeholder="请输入基本薪资" />
         </el-form-item>
-        <el-form-item label="培训地址" prop="trainAddress">
-          <el-input v-model="form.trainAddress" placeholder="请输入培训地址" />
-        </el-form-item>
-        <el-form-item label="培训计划详情" prop="trainDesc">
-          <el-input v-model="form.trainDesc" placeholder="请输入培训计划详情" />
+        <el-form-item label="保险费" prop="insuranceMoney">
+          <el-input v-model="form.insuranceMoney" placeholder="请输入保险费" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -169,14 +154,14 @@
   </div>
 </template>
 
-<script setup name="Management">
-import { listManagement, getManagement, delManagement, addManagement, updateManagement } from "@/api/manage/management";
-import {getCurrentInstance, reactive, ref, toRefs} from "vue";
+<script setup name="Salary">
+import { listSalary, getSalary, delSalary, addSalary, updateSalary } from "@/api/system/salary";
 import {parseTime} from "@/utils/ruoyi";
+import {getCurrentInstance, reactive, ref, toRefs} from "vue";
 
 const { proxy } = getCurrentInstance();
 
-const managementList = ref([]);
+const salaryList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -185,7 +170,6 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
-const daterangeTrainDatetime = ref([]);
 const daterangeCreateDate = ref([]);
 
 const data = reactive({
@@ -193,44 +177,37 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    trainTitle: null,
-    trainPersonName: null,
-    trainDatetime: null,
-    trainAddress: null,
+    userName: null,
+    userSourceDept: null,
+    baseMoney: null,
+    insuranceMoney: null,
     createDate: null,
   },
   rules: {
-    trainTitle: [
-      { required: true, message: "培训计划名称不能为空", trigger: "blur" }
+    userCode: [
+      { required: true, message: "员工编号不能为空", trigger: "blur" }
     ],
-    trainPersonName: [
-      { required: true, message: "培训人不能为空", trigger: "blur" }
+    userName: [
+      { required: true, message: "员工名称不能为空", trigger: "blur" }
     ],
-    trainDatetime: [
-      { required: true, message: "培训时间不能为空", trigger: "blur" }
-    ],
-    trainAddress: [
-      { required: true, message: "培训地址不能为空", trigger: "blur" }
+    userSourceDept: [
+      { required: true, message: "员工所属部门不能为空", trigger: "blur" }
     ],
   }
 });
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 查询培训管理列表 */
+/** 查询员工薪资列表 */
 function getList() {
   loading.value = true;
   queryParams.value.params = {};
-  if (null != daterangeTrainDatetime && '' != daterangeTrainDatetime) {
-    queryParams.value.params["beginTrainDatetime"] = daterangeTrainDatetime.value[0];
-    queryParams.value.params["endTrainDatetime"] = daterangeTrainDatetime.value[1];
-  }
   if (null != daterangeCreateDate && '' != daterangeCreateDate) {
     queryParams.value.params["beginCreateDate"] = daterangeCreateDate.value[0];
     queryParams.value.params["endCreateDate"] = daterangeCreateDate.value[1];
   }
-  listManagement(queryParams.value).then(response => {
-    managementList.value = response.rows;
+  listSalary(queryParams.value).then(response => {
+    salaryList.value = response.rows;
     total.value = response.total;
     loading.value = false;
   });
@@ -246,16 +223,15 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
-    trainTitle: null,
-    trainPersonName: null,
-    trainMessage: null,
-    trainDatetime: null,
-    trainAddress: null,
-    trainDesc: null,
+    userCode: null,
+    userName: null,
+    userSourceDept: null,
+    baseMoney: null,
+    insuranceMoney: null,
     createDate: null,
     updateDate: null
   };
-  proxy.resetForm("managementRef");
+  proxy.resetForm("salaryRef");
 }
 
 /** 搜索按钮操作 */
@@ -266,7 +242,6 @@ function handleQuery() {
 
 /** 重置按钮操作 */
 function resetQuery() {
-  daterangeTrainDatetime.value = [];
   daterangeCreateDate.value = [];
   proxy.resetForm("queryRef");
   handleQuery();
@@ -283,32 +258,32 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加培训管理";
+  title.value = "添加员工薪资";
 }
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
   const _id = row.id || ids.value
-  getManagement(_id).then(response => {
+  getSalary(_id).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改培训管理";
+    title.value = "修改员工薪资";
   });
 }
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["managementRef"].validate(valid => {
-      if (valid) {
+  proxy.$refs["salaryRef"].validate(valid => {
+    if (valid) {
       if (form.value.id != null) {
-        updateManagement(form.value).then(response => {
+        updateSalary(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
           getList();
         });
       } else {
-        addManagement(form.value).then(response => {
+        addSalary(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
           getList();
@@ -321,8 +296,8 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除培训管理编号为"' + _ids + '"的数据项？').then(function() {
-    return delManagement(_ids);
+  proxy.$modal.confirm('是否确认删除员工薪资编号为"' + _ids + '"的数据项？').then(function() {
+    return delSalary(_ids);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
@@ -331,9 +306,9 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download('manage/management/export', {
+  proxy.download('system/salary/export', {
     ...queryParams.value
-  }, `management_${new Date().getTime()}.xlsx`)
+  }, `salary_${new Date().getTime()}.xlsx`)
 }
 
 getList();

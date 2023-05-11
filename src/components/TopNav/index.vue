@@ -34,6 +34,7 @@ import { isHttp } from '@/utils/validate'
 import useAppStore from '@/store/modules/app'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
+import {useRoute} from "vue-router";
 
 // 顶部栏初始数
 const visibleNumber = ref(null);

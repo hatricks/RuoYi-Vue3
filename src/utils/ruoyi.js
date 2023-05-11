@@ -43,6 +43,7 @@ export function parseTime(time, pattern) {
     }
     return value || 0
   })
+  console.log("年月日时分秒格式化, %s", time_str);
   return time_str
 }
 
