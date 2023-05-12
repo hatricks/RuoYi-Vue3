@@ -10,33 +10,45 @@
           auto-complete="off" 
           placeholder="账号"
         >
-          <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
-      <el-form-item prop="password">
-        <el-input
-          v-model="registerForm.password"
-          type="password"
+      <el-form-item prop="name">
+        <el-input 
+          v-model="registerForm.name" 
+          type="text" 
           size="large" 
-          auto-complete="off"
-          placeholder="密码"
-          @keyup.enter="handleRegister"
+          auto-complete="off" 
+          placeholder="姓名"
         >
-          <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
-      <el-form-item prop="confirmPassword">
-        <el-input
-          v-model="registerForm.confirmPassword"
-          type="password"
+
+      <el-form-item prop="email">
+        <el-input 
+          v-model="registerForm.email" 
+          type="text" 
           size="large" 
-          auto-complete="off"
-          placeholder="确认密码"
-          @keyup.enter="handleRegister"
+          auto-complete="off" 
+          placeholder="邮箱"
         >
-          <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
         </el-input>
       </el-form-item>
+      <el-form-item label="" prop="examId">
+          <el-select
+          style="width: 100%;"
+            v-model="registerForm.examId"
+            class="m-2"
+            placeholder="请选择考试"
+          >
+            <el-option
+              v-for="item in examList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          <!--                    <el-input v-model="form.userSourceDept" placeholder="请选择员工所属部门"/>-->
+        </el-form-item>
       <el-form-item prop="code" v-if="captchaEnabled">
         <el-input
           size="large" 
@@ -46,7 +58,6 @@
           style="width: 63%"
           @keyup.enter="handleRegister"
         >
-          <template #prefix><svg-icon icon-class="validCode" class="el-input__icon input-icon" /></template>
         </el-input>
         <div class="register-code">
           <img :src="codeUrl" @click="getCode" class="register-code-img"/>
@@ -60,11 +71,11 @@
           style="width:100%;"
           @click.prevent="handleRegister"
         >
-          <span v-if="!loading">注 册</span>
-          <span v-else>注 册 中...</span>
+          <span v-if="!loading">报 名</span>
+          <span v-else>报 名 中...</span>
         </el-button>
         <div style="float: right;">
-          <router-link class="link-type" :to="'/login'">使用已有账户登录</router-link>
+          <router-link class="link-type" :to="'/login'">已报名去登录</router-link>
         </div>
       </el-form-item>
     </el-form>
@@ -78,16 +89,28 @@
 <script setup>
 import { ElMessageBox } from "element-plus";
 import { getCodeImg, register } from "@/api/login";
+import { getAll } from "@/api/system/exam";
+import {  reactive, ref} from "vue";
+
+
+const data = reactive({
+  examList: [],
+
+});
+
+let {examList } = toRefs(data);
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 
 const registerForm = ref({
   username: "",
-  password: "",
-  confirmPassword: "",
   code: "",
-  uuid: ""
+  uuid: "",
+  email:"",
+  examId:"",
+  name:""
+
 });
 
 const equalToPassword = (rule, value, callback) => {
@@ -98,18 +121,33 @@ const equalToPassword = (rule, value, callback) => {
   }
 };
 
+const getExam = function () {
+  getAll().then((response) => {
+    let d = response.data || [];
+    d.forEach((x) =>
+    examList.value.push({
+        value: x.id,
+        label: x.examName+'-'+x.examType,
+      })
+    );
+    console.log("部门的信息为:[{%o}]", data.deptNames);
+  });
+};
+
 const registerRules = {
   username: [
     { required: true, trigger: "blur", message: "请输入您的账号" },
     { min: 2, max: 20, message: "用户账号长度必须介于 2 和 20 之间", trigger: "blur" }
   ],
-  password: [
-    { required: true, trigger: "blur", message: "请输入您的密码" },
-    { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }
+  name: [
+    { required: true, trigger: "blur", message: "请输入姓名" },
+    { min: 2, max: 20, message: "用户账号长度必须介于 2 和 20 之间", trigger: "blur" }
   ],
-  confirmPassword: [
-    { required: true, trigger: "blur", message: "请再次输入您的密码" },
-    { required: true, validator: equalToPassword, trigger: "blur" }
+  email:[
+  { required: true, trigger: "blur", message: "请输入邮箱" },
+  ],
+  examId: [
+    { required: true, trigger: "blur", message: "请输入选择考试" },
   ],
   code: [{ required: true, trigger: "change", message: "请输入验证码" }]
 };
@@ -124,7 +162,7 @@ function handleRegister() {
       loading.value = true;
       register(registerForm.value).then(res => {
         const username = registerForm.value.username;
-        ElMessageBox.alert("<font color='red'>恭喜你，您的账号 " + username + " 注册成功！</font>", "系统提示", {
+        ElMessageBox.alert("<font color='red'>恭喜你，您的账号 " + username + " 报名成功！</font>", "系统提示", {
           dangerouslyUseHTMLString: true,
           type: "success",
         }).then(() => {
@@ -151,6 +189,7 @@ function getCode() {
 }
 
 getCode();
+getExam();
 </script>
 
 <style lang='scss' scoped>

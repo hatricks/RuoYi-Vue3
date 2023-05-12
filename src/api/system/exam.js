@@ -9,6 +9,15 @@ export function listExam(query) {
   })
 }
 
+// 查询考试管理列表
+export function getAll(query) {
+  return request({
+    url: '/system/exam/all',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询考试管理详细
 export function getExam(id) {
   return request({
