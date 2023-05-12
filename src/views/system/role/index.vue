@@ -244,6 +244,7 @@
 <script setup name="Role">
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/system/role";
 import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/menu";
+import {nextTick, ref} from "vue";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
