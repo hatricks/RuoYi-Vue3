@@ -17,6 +17,15 @@ export function getStudent(id) {
   })
 }
 
+
+export function updateStudentStatus(data) {
+  return request({
+    url: '/manage/student/updateStatus',
+    method: 'post',
+    data: data
+  })
+}
+
 // 新增考试学生管理
 export function addStudent(data) {
   return request({

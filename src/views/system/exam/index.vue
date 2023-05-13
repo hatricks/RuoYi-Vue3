@@ -77,12 +77,12 @@
       <el-table-column label="考试类型" align="center" prop="examType" />
       <el-table-column label="创建时间" align="center" prop="createDate" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.createDate, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.createDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="更新时间" align="center" prop="updateDate" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.updateDate, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.updateDate) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
