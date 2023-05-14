@@ -84,6 +84,7 @@
             <el-table-column label="学生分数" align="center" prop="examStudentScore"/>
             <el-table-column label="考试名称" align="center" prop="examName"/>
             <el-table-column label="考试类型" align="center" prop="examType"/>
+            <el-table-column label="考试状态" align="center" prop="examStatus"/>
             <el-table-column label="录入时间" align="center" prop="createDateTime"/>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
                 <template #default="scope">
@@ -219,6 +220,7 @@ const examList = function () {
             return {
                 value: x.id,
                 label: x.examName + '-' + x.examType,
+                examScore: x.examScore,
             }
         });
         console.log("所有查询信息", queryParams);
@@ -307,12 +309,10 @@ function submitForm() {
                     getList();
                 });
             } else {
-                console.log("form的值为", form.value.examStudentName);
+                console.log("queryParam的值为", queryParams);
                 console.log("查询的值为", queryParams.value.students);
                 let st = queryParams.value.students.filter(x => x.name === form.value.examStudentName) || [];
                 form.value.examStudentCode = st[0].code;
-                console.log("form的值为:", form.value);
-                console.log("st的值为", st[0].code);
                 addResult(form.value).then(response => {
                     proxy.$modal.msgSuccess("新增成功");
                     open.value = false;

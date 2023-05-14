@@ -67,7 +67,8 @@
             </el-table-column>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
                 <template #default="scope">
-                    <el-button v-if="parseInt(scope.row.status) === 0" link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['manage:student:edit']">确认考生状态
+                    <el-button v-if="parseInt(scope.row.status) === 0" link type="primary" icon="Edit"
+                               @click="handleUpdate(scope.row)" v-hasPermi="['manage:student:edit']">确认考生状态
                     </el-button>
                 </template>
             </el-table-column>
@@ -150,6 +151,7 @@ const data = reactive({
         email: null,
         examName: null,
         examType: null,
+        examScore: null,
         examDate: null,
     },
     rules: {}
@@ -184,6 +186,7 @@ function reset() {
         examName: null,
         examType: null,
         examDate: null,
+        examScore: null,
         createDate: null,
         updateDate: null
     };
