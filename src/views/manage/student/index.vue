@@ -57,7 +57,7 @@
             <el-table-column label="考试类型" align="center" prop="examType"/>
             <el-table-column label="考试时间" align="center" prop="examDate" width="180">
                 <template #default="scope">
-                    <span>{{ parseTime(scope.row.examDate, '{y}-{m}-{d}') }}</span>
+                    <span>{{ parseTime(scope.row.examDate) }}</span>
                 </template>
             </el-table-column>
             <el-table-column label="申请日期" align="center" prop="createDate" width="180">
