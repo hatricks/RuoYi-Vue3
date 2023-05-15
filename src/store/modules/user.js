@@ -29,7 +29,7 @@ const useUserStore = defineStore(
           })
         })
       },
-      // 获取用户信息
+      // 获取员工信息
       getInfo() {
         return new Promise((resolve, reject) => {
           getInfo().then(res => {

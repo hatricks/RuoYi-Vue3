@@ -86,7 +86,7 @@ export const constantRoutes = [
   }
 ]
 
-// 动态路由，基于用户权限动态去加载
+// 动态路由，基于员工权限动态去加载
 export const dynamicRoutes = [
   {
     path: '/system/user-auth',
@@ -112,7 +112,7 @@ export const dynamicRoutes = [
         path: 'user/:roleId(\\d+)',
         component: () => import('@/views/system/role/authUser'),
         name: 'AuthUser',
-        meta: { title: '分配用户', activeMenu: '/system/role' }
+        meta: { title: '分配员工', activeMenu: '/system/role' }
       }
     ]
   },

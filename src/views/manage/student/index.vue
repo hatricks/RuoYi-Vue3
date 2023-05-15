@@ -1,10 +1,10 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-            <el-form-item label="学生名称" prop="studentName">
+            <el-form-item label="考生名称" prop="studentName">
                 <el-input
                         v-model="queryParams.studentName"
-                        placeholder="请输入学生名称"
+                        placeholder="请输入考生名称"
                         clearable
                         @keyup.enter="handleQuery"
                 />
@@ -45,8 +45,8 @@
 
         <el-table v-loading="loading" :data="studentList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center"/>
-            <el-table-column label="学生编号" align="center" prop="id"/>
-            <el-table-column label="学生名称" align="center" prop="studentName"/>
+            <el-table-column label="考生编号" align="center" prop="id"/>
+            <el-table-column label="考生名称" align="center" prop="studentName"/>
             <el-table-column label="申请状态" align="center" prop="status">
                 <template #default="scope">
                     <span>{{ scope.row.status == 0 ? "已提交" : "已确认" }}</span>
@@ -82,14 +82,14 @@
                 @pagination="getList"
         />
 
-        <!-- 添加或修改考试学生管理对话框 -->
+        <!-- 添加或修改考试考生管理对话框 -->
         <el-dialog :title="title" v-model="open" width="500px" append-to-body>
             <el-form ref="studentRef" :model="form" :rules="rules" label-width="80px">
-                <el-form-item label="学生名称" prop="studentName">
-                    <el-input v-model="form.studentName" placeholder="请输入学生名称"/>
+                <el-form-item label="考生名称" prop="studentName">
+                    <el-input v-model="form.studentName" placeholder="请输入考生名称"/>
                 </el-form-item>
-                <!--        <el-form-item label="由于时间关系，将学生密码存储在这里" prop="studentPassword">-->
-                <!--          <el-input v-model="form.studentPassword" placeholder="请输入由于时间关系，将学生密码存储在这里" />-->
+                <!--        <el-form-item label="由于时间关系，将考生密码存储在这里" prop="studentPassword">-->
+                <!--          <el-input v-model="form.studentPassword" placeholder="请输入由于时间关系，将考生密码存储在这里" />-->
                 <!--        </el-form-item>-->
                 <el-form-item label="邮件" prop="email">
                     <el-input v-model="form.email" placeholder="请输入邮件"/>
@@ -159,7 +159,7 @@ const data = reactive({
 
 const {queryParams, form, rules} = toRefs(data);
 
-/** 查询考试学生管理列表 */
+/** 查询考试考生管理列表 */
 function getList() {
     loading.value = true;
     listStudent(queryParams.value).then(response => {
@@ -216,7 +216,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
     reset();
     open.value = true;
-    title.value = "添加考试学生管理";
+    title.value = "添加考试考生管理";
 }
 
 /** 修改按钮操作 */
@@ -228,12 +228,12 @@ function handleUpdate(row) {
         updateStudentStatus(response.data).then(response => {
             form.value = response.data;
             ////open.value = true;
-            ////title.value = "修改考试学生管理";
-            proxy.$modal.msgSuccess("确认学生状态成功");
+            ////title.value = "修改考试考生管理";
+            proxy.$modal.msgSuccess("确认考生状态成功");
             getList();
         });
         //open.value = true;
-        //title.value = "修改考试学生管理";
+        //title.value = "修改考试考生管理";
     });
 }
 
@@ -261,7 +261,7 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
     const _ids = row.id || ids.value;
-    proxy.$modal.confirm('是否确认删除考试学生管理编号为"' + _ids + '"的数据项？').then(function () {
+    proxy.$modal.confirm('是否确认删除考试考生管理编号为"' + _ids + '"的数据项？').then(function () {
         return delStudent(_ids);
     }).then(() => {
         getList();

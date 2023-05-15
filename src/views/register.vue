@@ -137,11 +137,11 @@ const getExam = function () {
 const registerRules = {
   username: [
     { required: true, trigger: "blur", message: "请输入您的账号" },
-    { min: 2, max: 20, message: "用户账号长度必须介于 2 和 20 之间", trigger: "blur" }
+    { min: 2, max: 20, message: "员工账号长度必须介于 2 和 20 之间", trigger: "blur" }
   ],
   name: [
     { required: true, trigger: "blur", message: "请输入姓名" },
-    { min: 2, max: 20, message: "用户账号长度必须介于 2 和 20 之间", trigger: "blur" }
+    { min: 2, max: 20, message: "员工账号长度必须介于 2 和 20 之间", trigger: "blur" }
   ],
   email:[
   { required: true, trigger: "blur", message: "请输入邮箱" },

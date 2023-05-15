@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询考试学生管理列表
+// 查询考试考生管理列表
 export function listStudent(query) {
   return request({
     url: '/manage/student/list',
@@ -9,7 +9,7 @@ export function listStudent(query) {
   })
 }
 
-// 查询考试学生管理详细
+// 查询考试考生管理详细
 export function getStudent(id) {
   return request({
     url: '/manage/student/' + id,
@@ -26,7 +26,7 @@ export function updateStudentStatus(data) {
   })
 }
 
-// 新增考试学生管理
+// 新增考试考生管理
 export function addStudent(data) {
   return request({
     url: '/manage/student',
@@ -35,7 +35,7 @@ export function addStudent(data) {
   })
 }
 
-// 修改考试学生管理
+// 修改考试考生管理
 export function updateStudent(data) {
   return request({
     url: '/manage/student',
@@ -44,7 +44,7 @@ export function updateStudent(data) {
   })
 }
 
-// 删除考试学生管理
+// 删除考试考生管理
 export function delStudent(id) {
   return request({
     url: '/manage/student/' + id,

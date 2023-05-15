@@ -2,10 +2,10 @@
 <template>
    <div class="app-container">
       <el-form :model="queryParams" ref="queryRef" v-show="showSearch" :inline="true">
-         <el-form-item label="用户名称" prop="userName">
+         <el-form-item label="员工名称" prop="userName">
             <el-input
                v-model="queryParams.userName"
-               placeholder="请输入用户名称"
+               placeholder="请输入员工名称"
                clearable
                style="width: 240px"
                @keyup.enter="handleQuery"
@@ -34,7 +34,7 @@
                icon="Plus"
                @click="openSelectUser"
                v-hasPermi="['system:role:add']"
-            >添加用户</el-button>
+            >添加员工</el-button>
          </el-col>
          <el-col :span="1.5">
             <el-button
@@ -59,8 +59,8 @@
 
       <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
          <el-table-column type="selection" width="55" align="center" />
-         <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
-         <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
+         <el-table-column label="员工名称" prop="userName" :show-overflow-tooltip="true" />
+         <el-table-column label="员工昵称" prop="nickName" :show-overflow-tooltip="true" />
          <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
          <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
          <el-table-column label="状态" align="center" prop="status">
@@ -114,7 +114,7 @@ const queryParams = reactive({
   phonenumber: undefined,
 });
 
-/** 查询授权用户列表 */
+/** 查询授权员工列表 */
 function getList() {
   loading.value = true;
   allocatedUserList(queryParams).then(response => {
@@ -143,13 +143,13 @@ function handleSelectionChange(selection) {
   userIds.value = selection.map(item => item.userId);
   multiple.value = !selection.length;
 }
-/** 打开授权用户表弹窗 */
+/** 打开授权员工表弹窗 */
 function openSelectUser() {
   proxy.$refs["selectRef"].show();
 }
 /** 取消授权按钮操作 */
 function cancelAuthUser(row) {
-  proxy.$modal.confirm('确认要取消该用户"' + row.userName + '"角色吗？').then(function () {
+  proxy.$modal.confirm('确认要取消该员工"' + row.userName + '"角色吗？').then(function () {
     return authUserCancel({ userId: row.userId, roleId: queryParams.roleId });
   }).then(() => {
     getList();
@@ -160,7 +160,7 @@ function cancelAuthUser(row) {
 function cancelAuthUserAll(row) {
   const roleId = queryParams.roleId;
   const uIds = userIds.value.join(",");
-  proxy.$modal.confirm("是否取消选中用户授权数据项?").then(function () {
+  proxy.$modal.confirm("是否取消选中员工授权数据项?").then(function () {
     return authUserCancelAll({ roleId: roleId, userIds: uIds });
   }).then(() => {
     getList();

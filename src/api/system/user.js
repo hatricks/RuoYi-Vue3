@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import { parseStrEmpty } from "@/utils/ruoyi";
 
-// 查询用户列表
+// 查询员工列表
 export function listUser(query) {
   return request({
     url: '/system/user/list',
@@ -10,7 +10,7 @@ export function listUser(query) {
   })
 }
 
-// 查询用户详细
+// 查询员工详细
 export function getUser(userId) {
   return request({
     url: '/system/user/' + parseStrEmpty(userId),
@@ -18,7 +18,7 @@ export function getUser(userId) {
   })
 }
 
-// 新增用户
+// 新增员工
 export function addUser(data) {
   return request({
     url: '/system/user',
@@ -27,7 +27,7 @@ export function addUser(data) {
   })
 }
 
-// 修改用户
+// 修改员工
 export function updateUser(data) {
   return request({
     url: '/system/user',
@@ -36,7 +36,7 @@ export function updateUser(data) {
   })
 }
 
-// 删除用户
+// 删除员工
 export function delUser(userId) {
   return request({
     url: '/system/user/' + userId,
@@ -44,7 +44,7 @@ export function delUser(userId) {
   })
 }
 
-// 用户密码重置
+// 员工密码重置
 export function resetUserPwd(userId, password) {
   const data = {
     userId,
@@ -57,7 +57,7 @@ export function resetUserPwd(userId, password) {
   })
 }
 
-// 用户状态修改
+// 员工状态修改
 export function changeUserStatus(userId, status) {
   const data = {
     userId,
@@ -70,7 +70,7 @@ export function changeUserStatus(userId, status) {
   })
 }
 
-// 查询用户个人信息
+// 查询员工个人信息
 export function getUserProfile() {
   return request({
     url: '/system/user/profile',
@@ -78,7 +78,7 @@ export function getUserProfile() {
   })
 }
 
-// 修改用户个人信息
+// 修改员工个人信息
 export function updateUserProfile(data) {
   return request({
     url: '/system/user/profile',
@@ -87,7 +87,7 @@ export function updateUserProfile(data) {
   })
 }
 
-// 用户密码重置
+// 员工密码重置
 export function updateUserPwd(oldPassword, newPassword) {
   const data = {
     oldPassword,
@@ -100,7 +100,7 @@ export function updateUserPwd(oldPassword, newPassword) {
   })
 }
 
-// 用户头像上传
+// 员工头像上传
 export function uploadAvatar(data) {
   return request({
     url: '/system/user/profile/avatar',

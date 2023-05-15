@@ -1,26 +1,26 @@
 <template>
     <div class="app-container">
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-            <el-form-item label="学生名称" prop="examStudentName">
+            <el-form-item label="考生名称" prop="examStudentName">
                 <el-input
                         v-model="queryParams.examStudentName"
-                        placeholder="请输入学生名称"
+                        placeholder="请输入考生名称"
                         clearable
                         @keyup.enter="handleQuery"
                 />
             </el-form-item>
-            <el-form-item label="学生编码" prop="examStudentCode">
+            <el-form-item label="考生编码" prop="examStudentCode">
                 <el-input
                         v-model="queryParams.examStudentCode"
-                        placeholder="请输入学生编码"
+                        placeholder="请输入考生编码"
                         clearable
                         @keyup.enter="handleQuery"
                 />
             </el-form-item>
-            <el-form-item label="学生分数" prop="examStudentScore">
+            <el-form-item label="考生分数" prop="examStudentScore">
                 <el-input
                         v-model="queryParams.examStudentScore"
-                        placeholder="请输入学生分数"
+                        placeholder="请输入考生分数"
                         clearable
                         @keyup.enter="handleQuery"
                 />
@@ -79,9 +79,9 @@
 
         <el-table v-loading="loading" :data="resultList" @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center"/>
-            <el-table-column label="学生名称" align="center" prop="examStudentName"/>
-            <el-table-column label="学生编码" align="center" prop="examStudentCode"/>
-            <el-table-column label="学生分数" align="center" prop="examStudentScore"/>
+            <el-table-column label="考生名称" align="center" prop="examStudentName"/>
+            <el-table-column label="考生编码" align="center" prop="examStudentCode"/>
+            <el-table-column label="考生分数" align="center" prop="examStudentScore"/>
             <el-table-column label="考试名称" align="center" prop="examName"/>
             <el-table-column label="考试类型" align="center" prop="examType"/>
             <el-table-column label="考试状态" align="center" prop="examStatus"/>
@@ -109,12 +109,12 @@
         <!-- 添加或修改成绩对话框 -->
         <el-dialog :title="title" v-model="open" width="500px" append-to-body>
             <el-form ref="resultRef" :model="form" :rules="rules" label-width="80px">
-                <el-form-item label="学生名称" prop="examStudentName">
+                <el-form-item label="考生名称" prop="examStudentName">
                     <el-select
                             style="width: 100%;"
                             v-model="form.examStudentName"
                             class="m-2"
-                            placeholder="请选择学生"
+                            placeholder="请选择考生"
                     >
                         <el-option
                                 v-for="item in queryParams.students"
@@ -141,8 +141,8 @@
                     </el-select>
                 </el-form-item>
 
-                <el-form-item label="学生分数" prop="examStudentScore">
-                    <el-input v-model="form.examStudentScore" placeholder="请输入学生分数"/>
+                <el-form-item label="考生分数" prop="examStudentScore">
+                    <el-input v-model="form.examStudentScore" placeholder="请输入考生分数"/>
                 </el-form-item>
             </el-form>
 
@@ -193,11 +193,11 @@ const data = reactive({
 let {queryParams, form, rules} = toRefs(data);
 
 
-/** 查询学生列表 */
+/** 查询考生列表 */
 const getStudentList = function () {
     loading.value = true;
     listStudent().then(response => {
-        console.log("所有的学生信息", response);
+        console.log("所有的考生信息", response);
         queryParams.value.students = response.rows.map(x => {
             return {
                 value: x.studentName + "",
@@ -206,7 +206,7 @@ const getStudentList = function () {
                 code: x.studentPassword
             }
         });
-        console.log("所有的学生信息", queryParams);
+        console.log("所有的考生信息", queryParams);
         loading.value = false;
     });
 }

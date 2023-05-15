@@ -52,7 +52,7 @@
         <el-form-item prop="functionName">
           <template #label>
             生成功能名
-            <el-tooltip content="用作类描述，例如 用户" placement="top">
+            <el-tooltip content="用作类描述，例如 员工" placement="top">
               <el-icon><question-filled /></el-icon>
             </el-tooltip>
           </template>

@@ -1,11 +1,11 @@
 <template>
-   <!-- 授权用户 -->
-   <el-dialog title="选择用户" v-model="visible" width="800px" top="5vh" append-to-body>
+   <!-- 授权员工 -->
+   <el-dialog title="选择员工" v-model="visible" width="800px" top="5vh" append-to-body>
       <el-form :model="queryParams" ref="queryRef" :inline="true">
-         <el-form-item label="用户名称" prop="userName">
+         <el-form-item label="员工名称" prop="userName">
             <el-input
                v-model="queryParams.userName"
-               placeholder="请输入用户名称"
+               placeholder="请输入员工名称"
                clearable
                style="width: 200px"
                @keyup.enter="handleQuery"
@@ -28,8 +28,8 @@
       <el-row>
          <el-table @row-click="clickRow" ref="refTable" :data="userList" @selection-change="handleSelectionChange" height="260px">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column label="用户名称" prop="userName" :show-overflow-tooltip="true" />
-            <el-table-column label="用户昵称" prop="nickName" :show-overflow-tooltip="true" />
+            <el-table-column label="员工名称" prop="userName" :show-overflow-tooltip="true" />
+            <el-table-column label="员工昵称" prop="nickName" :show-overflow-tooltip="true" />
             <el-table-column label="邮箱" prop="email" :show-overflow-tooltip="true" />
             <el-table-column label="手机" prop="phonenumber" :show-overflow-tooltip="true" />
             <el-table-column label="状态" align="center" prop="status">
@@ -117,12 +117,12 @@ function resetQuery() {
   handleQuery();
 }
 const emit = defineEmits(["ok"]);
-/** 选择授权用户操作 */
+/** 选择授权员工操作 */
 function handleSelectUser() {
   const roleId = queryParams.roleId;
   const uIds = userIds.value.join(",");
   if (uIds == "") {
-    proxy.$modal.msgError("请选择要分配的用户");
+    proxy.$modal.msgError("请选择要分配的员工");
     return;
   }
   authUserSelectAll({ roleId: roleId, userIds: uIds }).then(res => {

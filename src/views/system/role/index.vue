@@ -124,7 +124,7 @@
               <el-tooltip content="数据权限" placement="top" v-if="scope.row.roleId !== 1">
                 <el-button link type="primary" icon="CircleCheck" @click="handleDataScope(scope.row)" v-hasPermi="['system:role:edit']"></el-button>
               </el-tooltip>
-              <el-tooltip content="分配用户" placement="top" v-if="scope.row.roleId !== 1">
+              <el-tooltip content="分配员工" placement="top" v-if="scope.row.roleId !== 1">
                 <el-button link type="primary" icon="User" @click="handleAuthUser(scope.row)" v-hasPermi="['system:role:edit']"></el-button>
               </el-tooltip>
             </template>
@@ -363,7 +363,7 @@ function handleCommand(command, row) {
       break;
   }
 }
-/** 分配用户 */
+/** 分配员工 */
 function handleAuthUser(row) {
   router.push("/system/role-auth/user/" + row.roleId);
 }
